@@ -1,20 +1,14 @@
 package com.edwinsam.scoreboard.DAOs;
 
 import com.edwinsam.scoreboard.Models.Game;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Repository;
-import org.springframework.stereotype.Service;
 
 import javax.sql.DataSource;
 import java.time.LocalDate;
 import java.time.temporal.TemporalAdjusters;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Component
 public class JdbcGameDAO implements GameDAO {
@@ -23,6 +17,7 @@ public class JdbcGameDAO implements GameDAO {
 
     public JdbcGameDAO(DataSource dataSource) {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
+        this.jdbcTemplate.setIgnoreWarnings(false);
     }
 
     @Override
@@ -50,7 +45,7 @@ public class JdbcGameDAO implements GameDAO {
     public List<Game> filterGamesByName(List<Game> games, String name){
         List<Game> filteredGames = new ArrayList<>();
         for (Game game : games){
-            if (game.getName().equals(name)) {
+            if (game.getName().toLowerCase().equals(name.toLowerCase())) {
                 filteredGames.add(game);
             }
         }
@@ -76,7 +71,7 @@ public class JdbcGameDAO implements GameDAO {
 
 
     @Override
-    public void getAllGamesAllTime() {
+    public List<Game> getAllGamesAllTime() {
         //Store all games from DB into list
         List<Game> games = getAllGames();
 
@@ -89,10 +84,12 @@ public class JdbcGameDAO implements GameDAO {
         //Print record to user
         printRecord(record);
 
+        return games;
+
     }
 
     @Override
-    public void getAllGamesThisMonth() {
+    public List<Game> getAllGamesThisMonth() {
         LocalDate firstOfMonth = LocalDate.now().with(TemporalAdjusters.firstDayOfMonth());
         LocalDate lastOfMonth = LocalDate.now().with(TemporalAdjusters.lastDayOfMonth());
 
@@ -111,10 +108,12 @@ public class JdbcGameDAO implements GameDAO {
         //Print record to user
         printRecord(record);
 
+        return filteredGames;
+
     }
 
     @Override
-    public void getAllGamesByDate(LocalDate startDate, LocalDate endDate) {
+    public List<Game> getAllGamesByDate(LocalDate startDate, LocalDate endDate) {
         //Store all games from DB into list
         List<Game> games = getAllGames();
 
@@ -129,10 +128,12 @@ public class JdbcGameDAO implements GameDAO {
 
         //Print record to user
         printRecord(record);
+
+        return filteredGames;
     }
 
     @Override
-    public void getSpecificGameAllTime(String gameName) {
+    public List<Game> getSpecificGameAllTime(String gameName) {
         //Store all games from DB into List
         List<Game> games = getAllGames();
         //Filter games by name
@@ -149,10 +150,12 @@ public class JdbcGameDAO implements GameDAO {
         printRecord(record);
         printScore(scores);
 
+        return filteredGames;
+
     }
 
     @Override
-    public void getSpecificGameThisMonth(String gameName) {
+    public List<Game> getSpecificGameThisMonth(String gameName) {
         LocalDate firstOfMonth = LocalDate.now().with(TemporalAdjusters.firstDayOfMonth());
         LocalDate lastOfMonth = LocalDate.now().with(TemporalAdjusters.lastDayOfMonth());
 
@@ -173,26 +176,30 @@ public class JdbcGameDAO implements GameDAO {
         printRecord(record);
         printScore(scores);
 
+        return specificGamesThisMonth;
+
     }
 
     @Override
-    public void getSpecificGameByDate(String gameName,LocalDate startDate,  LocalDate endDate) {
+    public List<Game> getSpecificGameByDate(String gameName,LocalDate startDate,  LocalDate endDate) {
         //Store all games from DB into List
         List<Game> games = getAllGames();
         //Filter games by name and date
         List<Game> specificGames = filterGamesByName(games, gameName);
-        List<Game> specificGamesThisMonth = filterGamesByDate(specificGames, startDate, endDate);
+        List<Game> specificGamesByDate = filterGamesByDate(specificGames, startDate, endDate);
 
         //Print filtered games to user
-        printGameDetails(specificGamesThisMonth);
+        printGameDetails(specificGamesByDate);
 
         //Calculate num of wins for each player and store in Map
-        Map<String, Integer> record = calculateRecord(specificGamesThisMonth);
-        Map<String, Integer> scores = calculateScore(specificGamesThisMonth);
+        Map<String, Integer> record = calculateRecord(specificGamesByDate);
+        Map<String, Integer> scores = calculateScore(specificGamesByDate);
 
         //Print record to user
         printRecord(record);
         printScore(scores);
+
+        return specificGamesByDate;
     }
 
     @Override

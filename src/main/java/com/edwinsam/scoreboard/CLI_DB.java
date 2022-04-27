@@ -5,7 +5,6 @@ import com.edwinsam.scoreboard.DAOs.JdbcGameDAO;
 import com.edwinsam.scoreboard.Misc.GameLookUp;
 import com.edwinsam.scoreboard.Misc.Menu;
 import com.edwinsam.scoreboard.Models.Game;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.apache.commons.dbcp2.BasicDataSource;
 
 import java.time.DateTimeException;
@@ -27,7 +26,6 @@ public class CLI_DB {
     private static final String SEARCH_BY_DATE = "Enter Starting/Ending Dates";
 
     private Menu menu;
-    private JdbcTemplate jdbcTemplate;
     private GameDAO gameDAO;
     Scanner scanner = new Scanner(System.in);
     Game newGame = new Game();

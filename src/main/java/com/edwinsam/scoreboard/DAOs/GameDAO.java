@@ -13,12 +13,12 @@ public interface GameDAO {
     List<Game> filterGamesByDate(List<Game> games, LocalDate startDate, LocalDate endDate);
 
 
-    void getAllGamesAllTime();
-    void getAllGamesThisMonth();
-    void getAllGamesByDate(LocalDate startDate, LocalDate endDate);
-    void getSpecificGameAllTime(String gameName);
-    void getSpecificGameThisMonth(String gameName);
-    void getSpecificGameByDate(String gameName, LocalDate startDate, LocalDate endDate);
+    List<Game> getAllGamesAllTime();
+    List<Game> getAllGamesThisMonth();
+    List<Game> getAllGamesByDate(LocalDate startDate, LocalDate endDate);
+    List<Game> getSpecificGameAllTime(String gameName);
+    List<Game> getSpecificGameThisMonth(String gameName);
+    List<Game> getSpecificGameByDate(String gameName, LocalDate startDate, LocalDate endDate);
 
     void getPointsALlTime();
     void getPointsThisMonth();
