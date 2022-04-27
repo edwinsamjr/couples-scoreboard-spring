@@ -19,7 +19,7 @@
         </header>
         <main>
             <div id="menu-container">
-                <div class="menu-buttons">Enter New Score</div>
+                <div class="menu-buttons"><router-link> New Score</router-link></div>
                 <div class="menu-buttons">Search Scores</div>
                 <div class="menu-buttons">Search Points</div>
             </div>
