@@ -23,7 +23,7 @@ public class JdbcGameDAO implements GameDAO {
     @Override
     public List<Game> getAllGames() {
         //Query database for all games
-        String sql = "SELECT date, game, winner, rachel_score, edwin_score FROM gamelog ORDER BY date, game;";
+        String sql = "SELECT date, game, winner, rachel_score, edwin_score FROM gamelog ORDER BY date DESC, game;";
         SqlRowSet result = this.jdbcTemplate.queryForRowSet(sql);
 
         //Add all games to list called "games"

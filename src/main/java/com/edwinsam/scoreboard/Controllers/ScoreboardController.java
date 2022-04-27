@@ -3,6 +3,7 @@ package com.edwinsam.scoreboard.Controllers;
 
 import com.edwinsam.scoreboard.DAOs.GameDAO;
 import com.edwinsam.scoreboard.Models.Game;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -48,6 +49,7 @@ public class ScoreboardController {
         return this.gameDAO.getSpecificGameByDate(name, startDate, endDate);
     }
 
+    @ResponseStatus (HttpStatus.CREATED)
     @PostMapping (path="/games")
     public void addNewGame(@RequestBody Game game) {
         this.gameDAO.addNewGame(game);
