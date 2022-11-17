@@ -31,12 +31,11 @@ public class CLI_DB {
     private static final String SEARCH_BY_DATE = "Enter Starting/Ending Dates";
 
     private static final String WORDLE = "Wordle";
-    private static final String Scrabble = "Scrabble";
+    private static final String SCRABBLE = "Scrabble";
     private static final String QUORDLE = "Quordle";
     private static final String CUP_PONG = "Cup Pong";
     private static final String WORD_HUNT = "Word Hunt";
     private static final String EIGHT_BALL = "8 Ball";
-    private static final String SCRABBLE = "Scrabble";
 
     private Menu menu;
     private GameDAO gameDAO;
