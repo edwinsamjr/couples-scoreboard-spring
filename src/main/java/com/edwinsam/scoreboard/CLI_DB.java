@@ -7,9 +7,13 @@ import com.edwinsam.scoreboard.Misc.Menu;
 import com.edwinsam.scoreboard.Models.Game;
 import org.apache.commons.dbcp2.BasicDataSource;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.util.Scanner;
+
+import static java.lang.Integer.parseInt;
 
 public class CLI_DB {
 
@@ -17,13 +21,22 @@ public class CLI_DB {
     private static final String PASSWORD = System.getenv("PASSWORD");
 
     private static final String MAIN_MENU_OPTION_ENTER_SCORE = "Enter Score";
+    private static final String MAIN_MENU_OPTIONS_ENTER_SCORES_FROM_FILE = "Enter Scores from File";
     private static final String MAIN_MENU_OPTION_SEARCH_POINTS = "Search Points";
     private static final String MAIN_MENU_OPTION_LOOK_UP_SCORES = "Search Scores";
     private static final String MAIN_MENU_OPTION_EXIT = "Exit";
-    private static final String[] MAIN_MENU_OPTIONS = {MAIN_MENU_OPTION_LOOK_UP_SCORES, MAIN_MENU_OPTION_SEARCH_POINTS, MAIN_MENU_OPTION_ENTER_SCORE, MAIN_MENU_OPTION_EXIT};
+    private static final String[] MAIN_MENU_OPTIONS = {MAIN_MENU_OPTION_LOOK_UP_SCORES, MAIN_MENU_OPTION_SEARCH_POINTS, MAIN_MENU_OPTION_ENTER_SCORE, MAIN_MENU_OPTIONS_ENTER_SCORES_FROM_FILE, MAIN_MENU_OPTION_EXIT};
     private static final String SEARCH_ALL_TIME = "All Time";
     private static final String SEARCH_THIS_MONTH = "This Month";
     private static final String SEARCH_BY_DATE = "Enter Starting/Ending Dates";
+
+    private static final String WORDLE = "Wordle";
+    private static final String Scrabble = "Scrabble";
+    private static final String QUORDLE = "Quordle";
+    private static final String CUP_PONG = "Cup Pong";
+    private static final String WORD_HUNT = "Word Hunt";
+    private static final String EIGHT_BALL = "8 Ball";
+    private static final String SCRABBLE = "Scrabble";
 
     private Menu menu;
     private GameDAO gameDAO;
@@ -62,6 +75,8 @@ public class CLI_DB {
             } else if (choice.equals(MAIN_MENU_OPTION_ENTER_SCORE)) {
                 //Get game from user
                 enterNewGame(GameLookUp.gameOptions);
+            } else if (choice.equals(MAIN_MENU_OPTIONS_ENTER_SCORES_FROM_FILE)) {
+                enterScoresFromFile();
             } else if (choice.equals(MAIN_MENU_OPTION_SEARCH_POINTS)) {
                 //Get points based on time frame
 
@@ -177,6 +192,41 @@ public class CLI_DB {
 
     }
 
+    public void enterScoresFromFile() {
+        File scoresFile = new File("C:\\Users\\edwin\\Documents\\GitHub-Projects\\couples-scoreboard-spring\\src\\main\\resources\\ScoreboardFile.csv");
+        try {
+            Scanner scoresScanner = new Scanner(scoresFile);
+            int counter = 0;
+
+            while (scoresScanner.hasNext()) {
+                String line = scoresScanner.nextLine();
+                String[] columns = line.split("\t");
+
+                LocalDate date = LocalDate.parse(columns[0]);
+                int rachelWordleScore = validateScore(WORDLE, parseInt(columns[1])) ;
+                int edwinWordleScore = validateScore(WORDLE, parseInt(columns[2]));
+                int rachelQuordleScore = validateScore(QUORDLE, parseInt(columns[3])) ;
+                int edwinQuordleScore = validateScore(QUORDLE, parseInt(columns[4])) ;
+
+                Game newWordleGame = new Game(WORDLE, date, rachelWordleScore, edwinWordleScore);
+                Game newQuordleGame = new Game(QUORDLE, date, rachelQuordleScore, edwinQuordleScore);
+
+                gameDAO.addNewGame(newWordleGame);
+                counter++;
+                gameDAO.addNewGame(newQuordleGame);
+                counter++;
+            }
+
+            System.out.printf("Successfully entered %d games", counter);
+
+        } catch (FileNotFoundException e) {
+            System.out.println("File not found");
+            System.out.println();
+        } catch (IllegalArgumentException e) {
+            System.out.println("Invalid score entered");
+        }
+    }
+
     public LocalDate getGameDateFromUser() {
         boolean isValidDate = false;
         LocalDate date = null;
@@ -223,7 +273,7 @@ public class CLI_DB {
     public int[] convertStringDateToInts(String[] dateNums) {
         int[] dateInts = new int[3];
         for (int i = 0; i < dateNums.length; i++) {
-            dateInts[i] = Integer.parseInt(dateNums[i]);
+            dateInts[i] = parseInt(dateNums[i]);
         }
 
         return dateInts;
@@ -260,7 +310,7 @@ public class CLI_DB {
     }
 
     public int convertScoreToInt(String userInput) {
-        Integer scoreInt = Integer.parseInt(userInput);
+        Integer scoreInt = parseInt(userInput);
         return scoreInt;
     }
 
@@ -271,12 +321,12 @@ public class CLI_DB {
      * @throws IllegalArgumentException
      */
     public int validateScore(String name, int score) {
-        boolean isScrabble = name.equals("Scrabble");
-        boolean isWordle = name.equals("Wordle");
-        boolean isQuordle = name.equals("Quordle");
-        boolean isCupPong = name.equals("Cup Pong");
-        boolean isWordHunt = name.equals("Word Hunt");
-        boolean is8Ball = name.equals("8 Ball");
+        boolean isScrabble = name.equals(SCRABBLE);
+        boolean isWordle = name.equals(WORDLE);
+        boolean isQuordle = name.equals(QUORDLE);
+        boolean isCupPong = name.equals(CUP_PONG);
+        boolean isWordHunt = name.equals(WORD_HUNT);
+        boolean is8Ball = name.equals(EIGHT_BALL);
 
         boolean isValidWordleScore = (score > 0 && score < 7) || score == 9;
         boolean isValidScrabbleScore = score > 0;
